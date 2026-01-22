@@ -36,7 +36,7 @@ $string['viewreport'] = 'View Report';
 // Report strings.
 $string['coursename'] = 'Course Name';
 $string['lastmodified'] = 'Last Modified';
-$string['changecount'] = 'Change Count';
+$string['changecount'] = 'Risk Score';
 $string['risklevel'] = 'Risk Level';
 $string['low'] = 'Low';
 $string['medium'] = 'Medium';

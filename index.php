@@ -42,22 +42,8 @@ $threshold = get_config('tool_coursedriftdetector', 'threshold') ?: 10;
 $high_threshold = get_config('tool_coursedriftdetector', 'high_threshold') ?: 25;
 $monitoring_period = get_config('tool_coursedriftdetector', 'monitoring_period') ?: 30;
 
-// Calculate date threshold for monitoring period.
-$date_threshold = time() - ($monitoring_period * 24 * 60 * 60);
-
-// Get courses with recent changes.
-$sql = "SELECT c.id, c.fullname, c.timemodified,
-               COUNT(DISTINCT cm.id) as module_count,
-               COUNT(DISTINCT cs.id) as section_count
-        FROM {course} c
-        LEFT JOIN {course_modules} cm ON cm.course = c.id
-        LEFT JOIN {course_sections} cs ON cs.course = c.id
-        WHERE c.timemodified > :threshold
-        AND c.id != :siteid
-        GROUP BY c.id, c.fullname, c.timemodified
-        ORDER BY c.timemodified DESC";
-
-$courses = $DB->get_records_sql($sql, ['threshold' => $date_threshold, 'siteid' => SITEID]);
+// Get courses with recent changes using the lib function.
+$courses = tool_coursedriftdetector_get_drifted_courses($monitoring_period);
 
 if (empty($courses)) {
     echo html_writer::tag('p', get_string('nocourses', 'tool_coursedriftdetector'), ['class' => 'alert alert-info']);
@@ -73,17 +59,23 @@ if (empty($courses)) {
     $table->attributes['class'] = 'admintable generaltable';
 
     foreach ($courses as $course) {
-        // Simple risk calculation based on modification frequency.
-        $change_count = $course->module_count + $course->section_count;
+        // Calculate days since last modification.
+        $days_since_mod = floor((time() - $course->timemodified) / (24 * 60 * 60));
         
-        if ($change_count >= $high_threshold) {
-            $risk = get_string('high', 'tool_coursedriftdetector');
+        // Use inverse days (more recent = higher risk) and module/section count as indicators.
+        // This is a simplified risk calculation based on recency and course complexity.
+        $change_count = $course->module_count + $course->section_count;
+        $recency_score = max(0, $monitoring_period - $days_since_mod);
+        $risk_score = ($recency_score * $change_count) / $monitoring_period;
+        
+        $risk_level = tool_coursedriftdetector_calculate_risk($risk_score, $threshold, $high_threshold);
+        $risk = get_string($risk_level, 'tool_coursedriftdetector');
+        
+        if ($risk_level === 'high') {
             $risk_class = 'badge badge-danger';
-        } else if ($change_count >= $threshold) {
-            $risk = get_string('medium', 'tool_coursedriftdetector');
+        } else if ($risk_level === 'medium') {
             $risk_class = 'badge badge-warning';
         } else {
-            $risk = get_string('low', 'tool_coursedriftdetector');
             $risk_class = 'badge badge-success';
         }
 
@@ -95,7 +87,7 @@ if (empty($courses)) {
         $table->data[] = [
             $course_link,
             userdate($course->timemodified),
-            $change_count,
+            round($risk_score, 2),
             html_writer::tag('span', $risk, ['class' => $risk_class])
         ];
     }
