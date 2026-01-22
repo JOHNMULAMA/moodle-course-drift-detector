@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="admin/tool/coursedriftdetector/db" VERSION="2024111500" COMMENT="XMLDB file for Moodle tool_coursedriftdetector" ADDBOOKMARKS="true">
+  <TABLES>
+    <TABLE NAME="tool_coursedriftdetector_drift" COMMENT="Stores aggregated course drift snapshots">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" PRIMARYKEY="true" AUTOINCREMENT="true" COMMENT="Primary key"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" COMMENT="ID of the course this snapshot belongs to"/>
+        <FIELD NAME="drift_score" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" COMMENT="Calculated drift score (0=Low, 1=Medium, 2=High)"/>
+        <FIELD NAME="change_count" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" COMMENT="Number of detected changes for this snapshot"/>
+        <FIELD NAME="last_analyzed" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" COMMENT="Timestamp of when this snapshot was last analyzed"/>
+        <FIELD NAME="summary" TYPE="text" NOTNULL="false" COMMENT="JSON summary of detected changes or key metrics"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" COMMENT="Timestamp of when this record was created"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" COMMENT="Timestamp of when this record was last modified"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFERENCES="course" PMKEY="true" COMMENT="Foreign key to course table"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="idx_course" FIELDS="courseid" UNIQUE="false" COMMENT="Index on courseid for faster lookups"/>
+        <INDEX NAME="idx_lastanalyzed" FIELDS="last_analyzed" UNIQUE="false" COMMENT="Index on last_analyzed to optimize recent data queries"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
