@@ -29,6 +29,7 @@ require_once($CFG->libdir . '/adminlib.php');
 admin_externalpage_setup('tool_coursedriftdetector');
 
 $context = context_system::instance();
+// Check upload capability (view capability is already checked by admin_externalpage_setup).
 require_capability('tool/coursedriftdetector:upload', $context);
 
 $PAGE->set_url(new moodle_url('/admin/tool/coursedriftdetector/index.php'));
@@ -61,7 +62,9 @@ if ($mform->is_cancelled()) {
             \core\notification::info(get_string('processingfile', 'tool_coursedriftdetector'));
             
             // Clean up: Remove the temp file after processing.
-            @unlink($filepath);
+            if (file_exists($filepath)) {
+                unlink($filepath);
+            }
         } else {
             \core\notification::error(get_string('uploadfailed', 'tool_coursedriftdetector', 
                 'Failed to save file'));

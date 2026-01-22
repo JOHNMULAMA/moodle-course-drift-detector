@@ -24,30 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * Add Course Drift Detector to the admin menu.
- *
- * @param navigation_node $nav The navigation node to extend
- * @param stdClass $course The course object
- * @param context $context The course context
- */
-function tool_coursedriftdetector_extend_navigation_course($nav, $course, $context) {
-    // This function can be used to add navigation items within a course.
-    // Currently not needed for admin tool.
-}
+// No custom library functions required at this time.
+// All functionality is handled through standard Moodle APIs.
 
-/**
- * Callback for admin menu.
- *
- * @return array
- */
-function tool_coursedriftdetector_admin_menu() {
-    return [
-        'tool_coursedriftdetector' => [
-            'parent' => 'root',
-            'text' => get_string('pluginname', 'tool_coursedriftdetector'),
-            'url' => new moodle_url('/admin/tool/coursedriftdetector/index.php'),
-            'capability' => 'tool/coursedriftdetector:view',
-        ],
-    ];
-}
