@@ -1,0 +1,33 @@
+/* Course Drift Detector Styles */
+
+.tool-coursedriftdetector-report {
+    margin: 20px 0;
+}
+
+.tool-coursedriftdetector-report .badge {
+    padding: 5px 10px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.tool-coursedriftdetector-report .badge-danger {
+    background-color: #d9534f;
+    color: white;
+}
+
+.tool-coursedriftdetector-report .badge-warning {
+    background-color: #f0ad4e;
+    color: white;
+}
+
+.tool-coursedriftdetector-report .badge-success {
+    background-color: #5cb85c;
+    color: white;
+}
+
+.tool-coursedriftdetector-description {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f5f5f5;
+    border-left: 4px solid #0f6cbf;
+}
