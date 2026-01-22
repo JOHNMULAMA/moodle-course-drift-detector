@@ -1,0 +1,28 @@
+# Moodle plugin development
+/moodledata/
+/phpunit/
+/behat/
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# PHP
+vendor/
+composer.phar
+
+# Node
+node_modules/
+npm-debug.log
+
+# Temporary files
+*.tmp
+*.bak
+*.log
